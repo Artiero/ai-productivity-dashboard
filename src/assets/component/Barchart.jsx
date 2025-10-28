@@ -1,5 +1,6 @@
 import React from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import PropTypes from "prop-types";
 
 const data = [
     { name: "Sen", task: 20 },
@@ -11,17 +12,19 @@ const data = [
     { name: "Min", task: 5 },
 ];
 
-const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-        return (
-        <div className="bg-indigo-600 text-white p-3 rounded-md shadow-md text-sm">
-            <p className="font-semibold">{label}</p>
-            {/* Ubah teks di sini */}
-            <p>Mig : {payload[0].value}</p>
+function CustomTooltip({ active, payload, label }) {
+    if (!active || !payload?.length) return null;
+    return (
+        <div className="bg-gray-600 text-white px-3 py-2 rounded-md shadow-md">
+        <p className="font-semibold">{`${label} : ${payload?.[0]?.value}`}</p>
         </div>
-        );
-    }
-    return null;
+    );
+}
+
+CustomTooltip.propTypes = {
+    active: PropTypes.bool,
+    payload: PropTypes.array,
+    label: PropTypes.string,
 };
 
 export default function Barchart() {
@@ -37,27 +40,18 @@ export default function Barchart() {
                 >
                 <defs>
                     <linearGradient id="colorTask" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#60A5FA" stopOpacity={1}/>   {/* biru muda */}
-                    <stop offset="100%" stopColor="#FFFFFF" stopOpacity={1}/> {/* putih */}
+                    <stop offset="0%" stopColor="#60A5FA" stopOpacity={1}/>
+                    <stop offset="100%" stopColor="#FFFFFF" stopOpacity={1}/>
                     </linearGradient>
                 </defs>
                 
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="name" />
                 <YAxis />
-                <Tooltip cursor={{ fill: "rgba(79, 70, 229, 0.1)" }} content={({ active, payload, label }) => {
-                    if (active && payload?.length) {
-                        return (
-                        <div className="bg-gray-600 text-white px-3 py-2 rounded-md shadow-md">
-                            <p className="font-semibold">{`${label} : ${payload?.[0]?.value}`}</p>
-                        </div>
-                    );
-                }
-                return null;
-            }}/>
+                <Tooltip cursor={{ fill: "rgba(79, 70, 229, 0.1)" }} content={ <CustomTooltip /> }/>
                 <Bar 
                     dataKey="task" 
-                    fill="url(#colorTask)"  // pakai gradasi
+                    fill="url(#colorTask)"
                     radius={[4, 4, 0, 0]} 
                 />
                 </BarChart>
